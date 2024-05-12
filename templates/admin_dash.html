@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+  <div id="main">
+    <div id="nav-bar">
+      <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Librarian Dashboard</a>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#sections">Sections</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#requests">Requests</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/admin/allissues">Issues</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/userlogin">Logout</a>
+              </li>
+              <li class="nav-item d-flex align-items-center">
+                Admin
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+    <div id="search">
+    <form class="d-flex" role="search">
+      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success" type="submit">Filter</button>
+    </form>
+  </div>
+  <h2 class="headings" id="sections">Sections</h2>
+  <table class="table table-bordered table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="row">S. No.</th>
+        <th scope="col">Section Name</th>
+        <th scope="col">Date</th>
+        <th scope="col">Description</th>
+      </tr>
+    </thead>
+    <tbody class="table-group-divider">
+      {% for section in sections %}
+      <tr>
+        <th scope="row">{{loop.index}}</th>
+        <td>{{section.s_name}}</td>
+        <td>{{section.s_date}}</td>
+        <td>{{section.description}}</td>
+        <td>
+          <a href="/addbook/{{ section.s_name }}"><button type="submit" class="btn btn-primary">Add Book</button></a>
+          <form action="/admin//books/{{ section.s_name }}", method="post" style="display: inline-block;">
+            <button type="submit" class="btn btn-success">View Books</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a href="/addsection"><button type="button" class="btn btn-primary">New Section +</button></a>
+  
+  <h2 class="headings" id="requests">Pending Requests</h2>
+  {% if requests|length == 0 %}
+  <h3>No Pending Requests</h3>
+  {% else %}
+  <table class="table table-bordered table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="row">S. No.</th>
+        <th scope="col">Book Name</th>
+        <th scope="col">User Name</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody class="table-group-divider">
+      {% for request in requests %}
+      <tr>
+        <th scope="row">{{loop.index}}</th>
+        <td>{{request.book.b_title}}</td>
+        <td>{{request.user.name}}</td>
+        <td>
+          <form action="/admin/reject/{{ request.book_id }}/{{ request.user_id }}" method="post" style="display: inline-block;">
+            <button type="submit" class="btn btn-primary">
+              Reject
+            </button>
+          </form>
+          <form action="/admin/grant/{{ request.book_id }}/{{ request.user_id }}" method="post" style="display: inline-block;">
+            <button type="submit" class="btn btn-success">
+              Grant
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+  </div>
+</body>
+</html>
